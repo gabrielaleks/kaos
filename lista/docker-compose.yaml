@@ -16,7 +16,7 @@ services:
       - lista-network
 
   db-migrations:
-    image: lista-migrations:test
+    image: ghcr.io/gabrielaleks/lista-migrations:latest
     container_name: lista-db-migrations
     environment:
       - DATABASE_URL=${DATABASE_MIGRATION_URL}
@@ -30,7 +30,7 @@ services:
       - lista-network
 
   backend:
-    image: lista-backend:test
+    image: ghcr.io/gabrielaleks/lista-backend:latest
     container_name: lista-backend
     ports:
       - '${BACKEND_PORT}:3000'
@@ -53,7 +53,7 @@ services:
       - lista-network
 
   frontend:
-    image: lista-frontend:test
+    image: ghcr.io/gabrielaleks/lista-frontend:latest
     container_name: lista-frontend
     ports:
       - '${FRONTEND_PORT}:80'
