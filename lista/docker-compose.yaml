@@ -1,5 +1,70 @@
+version: '3.9'
+
 services:
-  backend:
-  frontend:
   database:
-  migrations:
+    image: postgres:15
+    container_name: lista-database
+    environment:
+      POSTGRES_DB: lista
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - lista-postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - lista-network
+
+  db-migrations:
+    image: lista-migrations:test
+    container_name: lista-db-migrations
+    environment:
+      - DATABASE_URL=${DATABASE_MIGRATION_URL}
+      - DBMATE_MIGRATIONS_TABLE=${DBMATE_MIGRATIONS_TABLE}
+      - DBMATE_WAIT=true
+      - DBMATE_MIGRATIONS_DIR=/db/migrations
+    depends_on:
+      - database
+    command: 'up'
+    networks:
+      - lista-network
+
+  # backend:
+  #   image: ghcr.io/gabrielaleks/lista-backend:latest
+  #   container_name: lista-backend
+  #   ports:
+  #     - '${BACKEND_PORT}:3000'
+  #   environment:
+  #     - PORT=${BACKEND_PORT}
+  #     - ENVIRONMENT=${ENVIRONMENT}
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_NAME=${DB_NAME}
+  #     - DB_PORT=${DB_PORT}
+  #     - ENABLE_SQL_LOGGING=${ENABLE_SQL_LOGGING}
+  #     - ENABLE_FILE_LOGGING=${ENABLE_FILE_LOGGING}
+  #   depends_on:
+  #     - database
+  #     - db-migrations
+  #   networks:
+  #     - lista-network
+
+  # frontend:
+  #   image: ghcr.io/gabrielaleks/lista-frontend:latest
+  #   container_name: lista-frontend
+  #   ports:
+  #     - '${FRONTEND_PORT}:5173'
+  #   environment:
+  #     - VITE_API_URL=${VITE_API_URL}
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - lista-network
+
+volumes:
+  lista-postgres:
+
+networks:
+  lista-network:
+    driver: bridge
