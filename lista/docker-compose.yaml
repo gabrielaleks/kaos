@@ -29,38 +29,38 @@ services:
     networks:
       - lista-network
 
-  # backend:
-  #   image: ghcr.io/gabrielaleks/lista-backend:latest
-  #   container_name: lista-backend
-  #   ports:
-  #     - '${BACKEND_PORT}:3000'
-  #   environment:
-  #     - PORT=${BACKEND_PORT}
-  #     - ENVIRONMENT=${ENVIRONMENT}
-  #     - DB_USERNAME=${DB_USERNAME}
-  #     - DB_PASSWORD=${DB_PASSWORD}
-  #     - DB_HOST=${DB_HOST}
-  #     - DB_NAME=${DB_NAME}
-  #     - DB_PORT=${DB_PORT}
-  #     - ENABLE_SQL_LOGGING=${ENABLE_SQL_LOGGING}
-  #     - ENABLE_FILE_LOGGING=${ENABLE_FILE_LOGGING}
-  #   depends_on:
-  #     - database
-  #     - db-migrations
-  #   networks:
-  #     - lista-network
+  backend:
+    image: lista-backend:test
+    container_name: lista-backend
+    ports:
+      - '${BACKEND_PORT}:3000'
+    environment:
+      - PORT=${BACKEND_PORT}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - ENABLE_SQL_LOGGING=${ENABLE_SQL_LOGGING}
+      - ENABLE_FILE_LOGGING=${ENABLE_FILE_LOGGING}
+      - LOCAL_FRONTEND_HOST=${LOCAL_FRONTEND_HOST}
+      - LOCAL_FRONTEND_PORT=${LOCAL_FRONTEND_PORT}
+    depends_on:
+      - database
+      - db-migrations
+    networks:
+      - lista-network
 
-  # frontend:
-  #   image: ghcr.io/gabrielaleks/lista-frontend:latest
-  #   container_name: lista-frontend
-  #   ports:
-  #     - '${FRONTEND_PORT}:5173'
-  #   environment:
-  #     - VITE_API_URL=${VITE_API_URL}
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - lista-network
+  frontend:
+    image: lista-frontend:test
+    container_name: lista-frontend
+    ports:
+      - '${FRONTEND_PORT}:80'
+    depends_on:
+      - backend
+    networks:
+      - lista-network
 
 volumes:
   lista-postgres:
