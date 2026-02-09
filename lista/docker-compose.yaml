@@ -10,10 +10,9 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - lista-postgres:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
     networks:
       - lista-network
+    restart: unless-stopped
 
   db-migrations:
     image: ghcr.io/gabrielaleks/lista-migrations:latest
@@ -51,6 +50,7 @@ services:
       - db-migrations
     networks:
       - lista-network
+    restart: unless-stopped
 
   frontend:
     image: ghcr.io/gabrielaleks/lista-frontend:latest
@@ -61,6 +61,7 @@ services:
       - backend
     networks:
       - lista-network
+    restart: unless-stopped
 
 volumes:
   lista-postgres:
