@@ -41,8 +41,7 @@ services:
       - DB_PORT=${DB_PORT}
       - ENABLE_SQL_LOGGING=${ENABLE_SQL_LOGGING}
       - ENABLE_FILE_LOGGING=${ENABLE_FILE_LOGGING}
-      - LOCAL_FRONTEND_HOST=${LOCAL_FRONTEND_HOST}
-      - LOCAL_FRONTEND_PORT=${LOCAL_FRONTEND_PORT}
+      - PUBLIC_FRONTEND_URL=${PUBLIC_FRONTEND_URL}
     depends_on:
       - database
       - db-migrations
@@ -53,13 +52,18 @@ services:
   frontend:
     image: ghcr.io/gabrielaleks/lista-frontend:latest
     container_name: lista-frontend
-    ports:
-      - '${FRONTEND_PORT}:80'
     depends_on:
       - backend
     networks:
       - lista-network
+      - traefik
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lista-frontend.rule=Host(`lista.kaos`)"
+      - "traefik.http.routers.lista-frontend.entrypoints=web"
+      - "traefik.http.services.lista-frontend.loadbalancer.server.port=80"
+
 
 volumes:
   lista-postgres:
@@ -67,3 +71,5 @@ volumes:
 networks:
   lista-network:
     driver: bridge
+  traefik:
+    external: true
