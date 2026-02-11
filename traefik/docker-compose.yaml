@@ -25,7 +25,7 @@ services:
       - "--metrics.prometheus=true"
 
       # TLS
-      - "--certificatesresolvers.le.acme.email=gabriel.aleks19@gmail.com"
+      - "--certificatesresolvers.le.acme.email=${CF_EMAIL}"
       - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.le.acme.dnschallenge=true"
       - "--certificatesresolvers.le.acme.dnschallenge.provider=cloudflare"
