@@ -31,7 +31,7 @@ services:
       - "--certificatesresolvers.le.acme.dnschallenge.provider=cloudflare"
 
       # Optionally use the staging server to prevent exhausting rate limits
-      # - "--certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     environment:
       - CLOUDFLARE_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
       - CF_ZONE_API_TOKEN=${CF_DNS_API_TOKEN}
