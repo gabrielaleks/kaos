@@ -7,37 +7,37 @@ services:
       - no-new-privileges:true
     command:
       # EntryPoints
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
 
-      # Providers 
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=traefik"
+      # Providers
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--providers.docker.network=traefik'
 
-      # API & Dashboard 
-      - "--api.dashboard=true"
+      # API & Dashboard
+      - '--api.dashboard=true'
 
-      # Observability 
-      - "--log.level=INFO" # INFO for prod, DEBUG for testing
-      - "--accesslog=true"
-      - "--metrics.prometheus=true"
+      # Observability
+      - '--log.level=INFO' # INFO for prod, DEBUG for testing
+      - '--accesslog=true'
+      - '--metrics.prometheus=true'
 
       # TLS
-      - "--certificatesresolvers.le.acme.email=${CF_EMAIL}"
-      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.le.acme.dnschallenge=true"
-      - "--certificatesresolvers.le.acme.dnschallenge.provider=cloudflare"
+      - '--certificatesresolvers.le.acme.email=${CF_EMAIL}'
+      - '--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json'
+      - '--certificatesresolvers.le.acme.dnschallenge=true'
+      - '--certificatesresolvers.le.acme.dnschallenge.provider=cloudflare'
 
       # Optionally use the staging server to prevent exhausting rate limits
-      - "--certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      # - "--certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     environment:
       - CLOUDFLARE_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
       - CF_ZONE_API_TOKEN=${CF_DNS_API_TOKEN}
     ports:
-      - "443:443"
-      - "8080:8080"
+      - '443:443'
+      - '8080:8080'
     volumes:
       # Traefik needs access to docker to see the containers (read-only)
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -46,15 +46,15 @@ services:
       - traefik
     labels:
       # Tells Traefik this container should be exposed
-      - "traefik.enable=true"
+      - 'traefik.enable=true'
       # Defines when to route traffic to this container
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.kaoshome.dev`)"
+      - 'traefik.http.routers.dashboard.rule=Host(`traefik.kaoshome.dev`)'
       # Tells Traefik which entrypoint the router listens on (web = HTTP port 80; websecure = 443)
-      - "traefik.http.routers.dashboard.entrypoints=websecure"
-      - "traefik.http.routers.dashboard.tls=true"
-      - "traefik.http.routers.dashboard.tls.certresolver=le"
+      - 'traefik.http.routers.dashboard.entrypoints=websecure'
+      - 'traefik.http.routers.dashboard.tls=true'
+      - 'traefik.http.routers.dashboard.tls.certresolver=le'
       # Sends traffic to Traefik dashboard, not a container
-      - "traefik.http.routers.dashboard.service=api@internal"
+      - 'traefik.http.routers.dashboard.service=api@internal'
 
 networks:
   traefik:
