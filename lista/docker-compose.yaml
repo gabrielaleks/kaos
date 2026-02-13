@@ -47,7 +47,15 @@ services:
       - db-migrations
     networks:
       - lista-network
+      - traefik
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lista-backend.rule=Host(`lista.kaoshome.dev`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.lista-backend.entrypoints=websecure"
+      - "traefik.http.routers.lista-backend.tls=true"
+      - "traefik.http.routers.lista-backend.tls.certresolver=le"
+      - "traefik.http.services.lista-backend.loadbalancer.server.port=3000"
 
   frontend:
     image: ghcr.io/gabrielaleks/lista-frontend:latest
@@ -60,8 +68,10 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.lista-frontend.rule=Host(`lista.kaos`)"
-      - "traefik.http.routers.lista-frontend.entrypoints=web"
+      - "traefik.http.routers.lista-frontend.rule=Host(`lista.kaoshome.dev`)"
+      - "traefik.http.routers.lista-frontend.entrypoints=websecure"
+      - "traefik.http.routers.lista-frontend.tls=true"
+      - "traefik.http.routers.lista-frontend.tls.certresolver=le"
       - "traefik.http.services.lista-frontend.loadbalancer.server.port=80"
 
 
