@@ -3,6 +3,7 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: unless-stopped
+    command: --sslcert="" --sslkey=""
     networks:
       - traefik
     volumes:
