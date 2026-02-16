@@ -1,3 +1,9 @@
+# Pihole
+Pi-hole is a network-wide ad blocker that works by acting as our local DNS server. It intercepts DNS queries from devices on our network and blocks requests to known advertising, tracking, or malicious domains before any connection is made, which makes it effective across all devices without requiring browser extensions.
+
+Internally, Pi-hole relies on dnsmasq (via its embedded FTLDNS engine) to handle DNS forwarding and custom resolution rules. This is powerful because we can define domain overrides directly at the DNS level, such as address=/.example.net/<raspberry-tailscale-ip>, forcing any subdomain of example.net to resolve to a specific internal address. When combined with Tailscale, this allows us to route private domains over our tailnet seamlessly, giving us secure internal service discovery without exposing anything publicly.
+
+## Configuring Pihole for this homeserver
 1. Configure Tailscale global DNS
 - Go to Tailscale Admin DNS
 - Create a global nameserver using the Raspberry Pi’s Tailscale IP
@@ -54,7 +60,7 @@ Why this matters:
 Create a file /etc/dnsmasq.d/02-kaos.conf and add:
 
 ```bash
-address=/.kaos/<raspberry-tailscale-ip>
+address=/.kaoshome.dev/<raspberry-tailscale-ip>
 ```
 
 Why this matters:
