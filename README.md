@@ -1,5 +1,7 @@
 # KAOS homeserver
 Available apps:
+- traefik: Reverse proxy
+- pihole: Network-wide adblocker + DNS server
 - Portainer: Container management UI
 - lista: Grocery list
 

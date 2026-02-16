@@ -7,8 +7,6 @@ http:
       tls:
         certResolver: le
       service: lista-frontend
-      middlewares:
-        - dashboard-auth
 
     lista-backend:
       rule: "Host(`lista.kaoshome.dev`) && PathPrefix(`/api`)"
