@@ -3,6 +3,13 @@ Available apps:
 - Portainer: Container management UI
 - lista: Grocery list
 
+# Managing dnsmasq
+Edit the file on /etc/dnsmasq.d/02-kaos.conf and restart pihole:
+
+```bash
+sudo systemctl restart pihole-FTL
+```
+
 # Starting the apps
 First, make sure you're logged in:
 
