@@ -1,0 +1,30 @@
+http:
+  routers:
+    lista-frontend:
+      rule: "Host(`lista.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: lista-frontend
+      middlewares:
+        - dashboard-auth
+
+    lista-backend:
+      rule: "Host(`lista.kaoshome.dev`) && PathPrefix(`/api`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: lista-backend
+
+  services:
+    lista-frontend:
+      loadBalancer:
+        servers:
+          - url: "http://lista-frontend:80"
+
+    lista-backend:
+      loadBalancer:
+        servers:
+          - url: "http://lista-backend:3000"

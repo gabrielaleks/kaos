@@ -1,0 +1,17 @@
+http:
+  middlewares:
+    dashboard-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$Lqh2N8xf$AGKcpU6uOFupu0Yti5om3/"
+
+  routers:
+    traefik-dashboard:
+      rule: "Host(`traefik.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: api@internal
+      middlewares:
+        - dashboard-auth

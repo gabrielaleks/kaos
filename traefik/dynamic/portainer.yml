@@ -1,0 +1,15 @@
+http:
+  routers:
+    portainer:
+      rule: "Host(`portainer.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: portainer
+
+  services:
+    portainer:
+      loadBalancer:
+        servers:
+          - url: "http://portainer:9000"
