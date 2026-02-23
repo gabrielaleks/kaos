@@ -1,0 +1,15 @@
+http:
+  routers:
+    homeassistant:
+      rule: "Host(`homeassistant.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: homeassistant
+
+  services:
+    homeassistant:
+      loadBalancer:
+        servers:
+          - url: "http://homeassistant:8123"

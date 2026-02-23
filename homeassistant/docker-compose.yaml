@@ -1,0 +1,21 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./ha-config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    environment:
+      TZ: Europe/Zurich
+    networks:
+      - traefik
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+networks:
+  traefik:
+    external: true
