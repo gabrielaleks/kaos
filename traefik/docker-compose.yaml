@@ -37,7 +37,6 @@ services:
       - CF_ZONE_API_TOKEN=${CF_DNS_API_TOKEN}
     ports:
       - '443:443'
-      - '8080:8080'
     volumes:
       - ./letsencrypt:/letsencrypt
       - ./dynamic:/dynamic
