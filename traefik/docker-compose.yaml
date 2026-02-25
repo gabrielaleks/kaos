@@ -39,8 +39,6 @@ services:
       - '443:443'
       - '8080:8080'
     volumes:
-      # Traefik needs access to docker to see the containers (read-only)
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./letsencrypt:/letsencrypt
       - ./dynamic:/dynamic
     networks:
