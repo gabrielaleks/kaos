@@ -1,0 +1,15 @@
+http:
+  routers:
+    kaos-dashboard:
+      rule: "Host(`kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: kaos-dashboard
+
+  services:
+    kaos-dashboard:
+      loadBalancer:
+        servers:
+          - url: "http://kaos-dashboard:80"

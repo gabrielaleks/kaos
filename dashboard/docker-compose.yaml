@@ -1,0 +1,11 @@
+services:
+  kaos-dashboard:
+    image: ghcr.io/gabrielaleks/kaos-dashboard:latest
+    container_name: kaos-dashboard
+    restart: unless-stopped
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
