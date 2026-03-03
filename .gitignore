@@ -1,3 +1,18 @@
 .env
 letsencrypt
-ha-config
+
+# Home Assistant - exclude sensitive and generated files
+homeassistant/ha-config/secrets.yaml
+homeassistant/ha-config/*.log*
+homeassistant/ha-config/*.db*
+homeassistant/ha-config/.storage/
+homeassistant/ha-config/deps/
+homeassistant/ha-config/tts/
+homeassistant/ha-config/.HA_VERSION
+homeassistant/ha-config/.cloud/
+homeassistant/ha-config/.google.token
+homeassistant/ha-config/known_devices.yaml
+homeassistant/ha-config/home-assistant_v2.db*
+homeassistant/ha-config/OZW_Log.txt
+homeassistant/ha-config/zwcfg_*.xml
+homeassistant/ha-config/ip_bans.yaml

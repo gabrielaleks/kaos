@@ -1,0 +1,18 @@
+- id: '1772057389264'
+  alias: Turn on
+  description: ''
+  triggers:
+  - device_id: 0c4ff2a37bc7ca6987b3b2909d8090f7
+    domain: webostv
+    type: webostv.turn_on
+    metadata: {}
+    trigger: device
+  conditions: []
+  actions:
+  - action: wake_on_lan.send_magic_packet
+    metadata: {}
+    data:
+      broadcast_port: 9
+      mac: 08:27:A8:B3:CB:8A
+      broadcast_address: 192.168.178.28
+  mode: single
