@@ -16,3 +16,8 @@ homeassistant/ha-config/home-assistant_v2.db*
 homeassistant/ha-config/OZW_Log.txt
 homeassistant/ha-config/zwcfg_*.xml
 homeassistant/ha-config/ip_bans.yaml
+homeassistant/ha-config/.ha_run.lock
+
+# Other
+.claude
+.DS_Store
