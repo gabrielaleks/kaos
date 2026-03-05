@@ -1,48 +1,49 @@
-# KAOS homeserver
-Available apps:
-- traefik: Reverse proxy
-- pihole: Network-wide adblocker + DNS server
-- Portainer: Container management UI
-- lista: Grocery list
+# kaos
 
-# Starting the apps
-First, make sure you're logged in:
+A self-hosted homeserver running on a Raspberry Pi: privately accessible from anywhere via Tailscale, with automatic HTTPS through Traefik and Let's Encrypt.
+
+## Services
+
+| Service | Description |
+|---|---|
+| [Dashboard](./dashboard) | Services overview |
+| [Traefik](./traefik) | Reverse proxy with automatic TLS |
+| [Pi-hole](./pihole) | Network-wide ad blocking and local DNS |
+| [Tailscale](./tailscale) | VPN overlay for secure remote access |
+| [Home Assistant](./homeassistant) | Home automation |
+| [Portainer](./portainer) | Container management UI |
+| [Lista](./lista) | Grocery list app |
+
+## Setup
+
+Most services are Docker-based. The general pattern is:
 
 ```bash
-docker login ghcr.io -u gabrielaleks
-```
-
-This will enable you to pull any images from `ghcr.io/gabrielaleks`
-
-## Lista
-Create a .env file, copy the contents from .env.example and replace any variables if needed. Make sure to set PUBLIC_FRONTEND_URL accordingly.
-
-```bash
-cd ./lista
+cp .env.example .env   # fill in values
 docker compose up -d
 ```
 
-## Portainer
-Portainer's setup is simple. To use it, just go to the its folder and start the container:
+See each service's folder for specific setup instructions.
+
+### Traefik
+
+Requires a Cloudflare API token for DNS-01 certificate issuance. Copy `.env.example`, populate your Cloudflare credentials, then copy `dynamic/traefik-dashboard.yml.example` to `dynamic/traefik-dashboard.yml` and set your hashed admin password:
 
 ```bash
-cd ./portainer
-docker compose up -d
+htpasswd -nb admin yourpassword
 ```
 
-## Pihole
-Pihole is a bit special as it is not running on a docker container - it runs bare-metal on the Raspberry Pi. To install it run the following command:
+### Pi-hole
 
-```bash
-curl -sSL https://install.pi-hole.net | bash
+Runs bare-metal on the Raspberry Pi (not in Docker). See [pihole/README.md](./pihole/README.md) for the full setup, including Tailscale DNS integration and custom dnsmasq configuration.
+
+## Architecture
+
+All HTTPS traffic is routed through Traefik, which terminates TLS using certificates issued by Let's Encrypt via Cloudflare's DNS API. Services are only reachable through Tailscale — nothing is exposed to the public internet. Pi-hole acts as the internal DNS server, resolving `*.kaoshome.dev` to the Raspberry Pi's Tailscale IP.
+
 ```
-
-## Traefik
-Before starting traefik's container, make sure to create a .env file, copy the content from .env.example and populate the vars (based on your cloudflare account).
-
-When that's done, start the container:
-
-```bash
-cd ./traefik
-docker compose up -d
+Client (on Tailnet)
+  → Pi-hole resolves *.kaoshome.dev → Tailscale IP
+  → Traefik (port 443) terminates TLS
+  → Routes to the appropriate container
 ```
