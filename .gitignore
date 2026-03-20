@@ -17,6 +17,7 @@ homeassistant/ha-config/OZW_Log.txt
 homeassistant/ha-config/zwcfg_*.xml
 homeassistant/ha-config/ip_bans.yaml
 homeassistant/ha-config/.ha_run.lock
+homeassistant/matter-data
 
 # Other
 .claude

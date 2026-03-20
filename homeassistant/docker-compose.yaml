@@ -1,4 +1,15 @@
 services:
+  matter-server:
+    container_name: matter-server
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ./matter-data:/data
+      - /run/dbus:/run/dbus:ro
+    network_mode: host
+
   homeassistant:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
@@ -11,6 +22,8 @@ services:
       TZ: Europe/Zurich
     networks:
       - traefik
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     cap_add:
       - NET_ADMIN
       - NET_RAW
