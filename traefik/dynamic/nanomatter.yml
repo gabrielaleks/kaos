@@ -1,0 +1,28 @@
+http:
+  routers:
+    nanomatter-frontend:
+      rule: 'Host(`nanomatter.kaoshome.dev`)'
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: nanomatter-frontend
+
+    nanomatter-controller:
+      rule: 'Host(`nanomatter.kaoshome.dev`) && PathPrefix(`/api`)'
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: nanomatter-controller
+
+  services:
+    nanomatter-frontend:
+      loadBalancer:
+        servers:
+          - url: 'http://nanomatter-frontend:80'
+
+    nanomatter-controller:
+      loadBalancer:
+        servers:
+          - url: 'http://host.docker.internal:3721'

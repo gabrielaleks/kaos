@@ -1,0 +1,30 @@
+services:
+  controller:
+    image: ghcr.io/gabrielaleks/nanomatter-controller:latest
+    container_name: nanomatter-controller
+    environment:
+      - PORT=${PORT}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - PUBLIC_FRONTEND_URL=${PUBLIC_FRONTEND_URL}
+      - ENABLE_SQL_LOGGING=${ENABLE_SQL_LOGGING}
+      - ENABLE_FILE_LOGGING=${ENABLE_FILE_LOGGING}
+      - DB_PATH=${DB_PATH}
+      - MATTER_STORAGE_PATH=/matter
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./db:/db
+      - ./controller/matter-storage:/matter
+
+  frontend:
+    image: ghcr.io/gabrielaleks/nanomatter-frontend:latest
+    container_name: nanomatter-frontend
+    depends_on:
+      - controller
+    networks:
+      - traefik
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
