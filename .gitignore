@@ -19,6 +19,10 @@ homeassistant/ha-config/ip_bans.yaml
 homeassistant/ha-config/.ha_run.lock
 homeassistant/matter-data
 
+# Nanomatter
+nanomatter/db
+nanomatter/controller
+
 # Other
 .claude
 .DS_Store
