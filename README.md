@@ -10,9 +10,10 @@ A self-hosted homeserver running on a Raspberry Pi: privately accessible from an
 | [Traefik](./traefik) | Reverse proxy with automatic TLS |
 | [Pi-hole](./pihole) | Network-wide ad blocking and local DNS |
 | [Tailscale](./tailscale) | VPN overlay for secure remote access |
-| [Home Assistant](./homeassistant) | Home automation |
+| [Home Assistant](./homeassistant) | Home automation platform |
 | [Portainer](./portainer) | Container management UI |
 | [Lista](./lista) | Grocery list app |
+| [Nanomatter](./nanomatter) | Lightweight Matter controller |
 
 ## Setup
 
