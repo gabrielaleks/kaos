@@ -24,9 +24,9 @@ nanomatter/db
 nanomatter/controller
 
 # Envelope
-envelope-hub/mosquitto/config/passwd
-envelope-hub/mosquitto/data
-envelope-hub/mosquitto/log
+envelope/mosquitto/config/passwd
+envelope/mosquitto/data
+envelope/mosquitto/log
 
 # Other
 .claude

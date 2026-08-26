@@ -14,7 +14,7 @@ A self-hosted homeserver running on a Raspberry Pi: privately accessible from an
 | [Portainer](./portainer) | Container management UI |
 | [Lista](./lista) | Grocery list app |
 | [Nanomatter](./nanomatter) | Lightweight Matter controller |
-| [Envelope](./envelope-hub) | Mailbox notification system |
+| [Envelope](./envelope) | Mailbox notification system |
 
 ## Setup
 
