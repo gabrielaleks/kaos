@@ -23,6 +23,8 @@ services:
       - MQTT_PORT=${MQTT_PORT}
     depends_on:
       - mosquitto
+    volumes:
+      - ./db:/db
     networks:
       - envelope-hub-network
       - traefik
