@@ -23,6 +23,11 @@ homeassistant/matter-data
 nanomatter/db
 nanomatter/controller
 
+# Envelope
+envelope-hub/mosquitto/config/passwd
+envelope-hub/mosquitto/data
+envelope-hub/mosquitto/log
+
 # Other
 .claude
 .DS_Store

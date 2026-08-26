@@ -1,0 +1,15 @@
+http:
+  routers:
+    envelope:
+      rule: "Host(`envelope.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: envelope
+
+  services:
+    envelope:
+      loadBalancer:
+        servers:
+          - url: "http://envelope-hub:3000"

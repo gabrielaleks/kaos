@@ -1,0 +1,34 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: envelope-mosquitto
+    restart: unless-stopped
+    ports:
+      - '1883:1883'
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/data:/mosquitto/data
+    networks:
+      - envelope-hub-network
+
+  app:
+    image: ghcr.io/gabrielaleks/envelope-hub:latest
+    container_name: envelope-hub
+    restart: unless-stopped
+    environment:
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=${MQTT_PORT}
+    depends_on:
+      - mosquitto
+    networks:
+      - envelope-hub-network
+      - traefik
+
+networks:
+  envelope-hub-network:
+    driver: bridge
+  traefik:
+    external: true
