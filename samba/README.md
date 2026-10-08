@@ -37,7 +37,10 @@ docker compose up -d
 sleep 5
 docker logs samba
 docker exec samba grep -E ':10[0-9][0-9]:' /etc/passwd   # every account, alekspi on 1000
+docker exec samba grep smbusers /etc/group                # every account listed after the last colon
 ```
+
+An account missing from `smbusers` can log in, but sees no shares. macOS reports this as "the share does not exist". Check that its `GROUPS_<username>` line uses the exact username.
 
 `.env` is only read when the container is created. After editing it, run `docker compose up -d --force-recreate`.
 
