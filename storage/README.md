@@ -158,9 +158,9 @@ Stop any container using the disk before unmounting.
 ## Status
 - [x] Drive and enclosure installed, SMART baseline clean
 - [x] Disk partitioned, formatted and mounted at `/mnt/storage`
-- [ ] Empty mount point made immutable (setup step 6)
-- [ ] Samba service running, both logins working ([samba/](../samba))
-- [ ] Recycle bin cleanup cron job
+- [x] Empty mount point made immutable (setup step 6)
+- [x] Samba service running, both logins working ([samba/](../samba))
+- [x] Recycle bin cleanup cron job
 
 ## Open questions
 - **Backups:** off-site or not, and where (see [Backups](#backups-undecided)).
