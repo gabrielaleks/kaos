@@ -28,12 +28,18 @@ Replace `partner` with her username (in all three variables) and set a strong pa
 
 Keep `UID_alekspi=1000`. Every user is written to disk as `alekspi`, so files created by anyone keep the same owner as the rest of `/mnt/storage`.
 
+Give every other account its own fixed UID too (1001, 1002, ...). The container creates accounts in no particular order. An account without a UID gets the first free one, which can be 1000, and then `alekspi` can't be created. `FAIL_FAST` makes the container stop instead of running without that account.
+
 4. Start it
 
 ```bash
 docker compose up -d
+sleep 5
 docker logs samba
+docker exec samba grep -E ':10[0-9][0-9]:' /etc/passwd   # every account, alekspi on 1000
 ```
+
+`.env` is only read when the container is created. After editing it, run `docker compose up -d --force-recreate`.
 
 5. Check that new files get the right owner
 
@@ -58,14 +64,39 @@ Use the Pi's **LAN IP** at home. It's faster because the traffic doesn't go thro
 ## Deleted files: `.recycle`
 SMB has no Trash. Finder warns that a file "will be deleted immediately", and other clients don't even warn. To make up for that, Samba moves deleted files to `.recycle/<username>/`, keeping their original folder structure. To restore a file, open `.recycle` in the share (on macOS, press ⌘⇧. to show hidden folders) and move the file back.
 
-Files in `.recycle` count towards disk usage. To empty anything older than 30 days automatically, add this to `alekspi`'s crontab on the Pi (`crontab -e`):
+Files in `.recycle` count towards disk usage. [recycle-cleanup.sh](recycle-cleanup.sh) permanently deletes anything that has been in the bin for more than 30 days. It runs every night from `alekspi`'s crontab:
+
+1. Check that cron is running
 
 ```bash
-0 4 * * * find /mnt/storage/.recycle -type f -atime +30 -delete && find /mnt/storage/.recycle -mindepth 1 -type d -empty -delete
+systemctl is-active cron   # should print "active"; if not: sudo apt install -y cron
 ```
 
+2. Check that recycled files get a fresh ctime (the script relies on it)
+
+Delete any file from the share, then on the Pi:
+
+```bash
+stat -c '%z  %n' /mnt/storage/.recycle/<username>/<path-to-file>   # the "change" time must be just now
+```
+
+3. Run the script once by hand
+
+```bash
+~/kaos/samba/recycle-cleanup.sh
+journalctl -t recycle-cleanup -n 5   # "deleted 0 file(s) older than 30 days"
+```
+
+4. Schedule it (`crontab -e`) to run every night at 04:00
+
+```bash
+0 4 * * * /home/alekspi/kaos/samba/recycle-cleanup.sh
+```
+
+To see what it has deleted over time, run `journalctl -t recycle-cleanup`.
+
 ## Adding or changing a user
-Edit `.env` (`ACCOUNT_<username>`, `GROUPS_<username>=smbusers`), then run:
+Edit `.env` (`ACCOUNT_<username>`, `UID_<username>` with the next free number, `GROUPS_<username>=smbusers`), then run:
 
 ```bash
 docker compose up -d --force-recreate
