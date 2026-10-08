@@ -1,0 +1,15 @@
+http:
+  routers:
+    backrest:
+      rule: "Host(`backrest.kaoshome.dev`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: le
+      service: backrest
+
+  services:
+    backrest:
+      loadBalancer:
+        servers:
+          - url: "http://backrest:9898"

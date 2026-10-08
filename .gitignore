@@ -28,6 +28,11 @@ envelope/mosquitto/config/passwd
 envelope/mosquitto/data
 envelope/mosquitto/log
 
+# Backrest (config.json holds the repository password and B2 keys)
+backrest/data
+backrest/config
+backrest/cache
+
 # Other
 .claude
 .DS_Store

@@ -16,6 +16,7 @@ A self-hosted homeserver running on a Raspberry Pi: privately accessible from an
 | [Nanomatter](./nanomatter) | Lightweight Matter controller |
 | [Envelope](./envelope) | Mailbox notification system |
 | [Samba](./samba) | Network drive for the [storage disk](./storage) |
+| [Backrest](./backrest) | Nightly encrypted backups of the storage disk to Backblaze B2 |
 
 ## Setup
 

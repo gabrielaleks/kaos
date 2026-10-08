@@ -1,0 +1,28 @@
+services:
+  backrest:
+    image: ghcr.io/garethgeorge/backrest:v1.14.1
+    container_name: backrest
+    restart: unless-stopped
+    # Runs as alekspi, so restored files get the same owner as the rest of /mnt/storage
+    user: '1000:1000'
+    environment:
+      BACKREST_DATA: /data
+      BACKREST_CONFIG: /config/config.json
+      BACKREST_PORT: 0.0.0.0:9898
+      XDG_CACHE_HOME: /cache
+      TZ: Europe/Zurich
+    volumes:
+      # config.json holds the repository password and B2 keys: gitignored
+      - ./data:/data
+      - ./config:/config
+      - ./cache:/cache
+      # Read-only: Backrest can never change the originals
+      - /mnt/storage:/userdata:ro
+      # Restores land here, visible in the Samba share as restores/
+      - /mnt/storage/restores:/restores
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

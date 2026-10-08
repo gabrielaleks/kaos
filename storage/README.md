@@ -6,7 +6,7 @@ A 4 TB hard drive attached to the Raspberry Pi over USB that holds *anything*: R
 - **Photographer workflow.** Bulk-copy large RAW and video files from the Mac, and open archived files directly from desktop apps (Lightroom, Photoshop). The Lightroom catalog stays on the Mac; only the image files live here.
 - **Every device on the tailnet.** macOS, Linux, Windows and iPhone. Two people use the tailnet (me and my girlfriend). She has her own login and, for now, the same access as me: everything under `/mnt/storage`.
 - **Private only.** Reachable only from the home LAN and the tailnet. Nothing is exposed to the public internet, and there is no plan to share files with anyone outside the tailnet.
-- **Survive mistakes and disk failure.** A single disk is a single copy. Deleted files are recoverable for 30 days. Whether to add an off-site backup is still open (see [Backups](#backups-undecided)).
+- **Survive mistakes and disk failure.** A single disk is a single copy. Deleted files are recoverable for 30 days, and the irreplaceable folders are backed up off-site every night (see [Backups](#backups-restic--backblaze-b2)).
 - **The rest of the homelab must not depend on the disk.** If the drive is unplugged or dies, the Pi still boots and Home Assistant, Pi-hole and the other services keep running.
 
 ## Hardware
@@ -36,7 +36,8 @@ The disk is mounted once at `/mnt/storage`. Each app is bind-mounted only the fo
 ├── photos/      raw/, edited/, exports/
 ├── videos/
 ├── documents/
-└── media/       movies/, tv/, music/
+├── media/       movies/, tv/, music/
+└── restores/    where Backrest puts restored files
 ```
 
 - **App data stays on the SSD.** Databases and configs live in each service's folder in this repo (as `envelope/db` does). The HDD only holds user files.
@@ -64,18 +65,28 @@ The disk is mounted once at `/mnt/storage`. Each app is bind-mounted only the fo
 ### Web UI: deferred
 The iPhone Files app already covers mobile access over SMB, so a web file manager isn't needed yet. If it turns out to be useful later, for example because I'd like to have a browser UI or I want per-person folders and search, the choice is **[FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser)** on the `1.5-stable` tag, behind Traefik like the other web services. The original [File Browser](https://github.com/filebrowser/filebrowser) was archived on 2026-08-31 with unfixed security issues and must not be used.
 
-### Backups: undecided
-Until this is decided, the disk is the **only copy** of anything that no longer exists elsewhere. As long as the photos also stay on the Mac, there are two copies. Decide this before deleting anything from the Mac.
+### Backups: restic → Backblaze B2
+Each layer protects against different things. Only an off-site backup covers all of them:
 
-What a backup protects against that the recycle bin doesn't: the disk dying, filesystem corruption, a power surge, theft or fire, and ransomware on any device that has the share mounted (it encrypts files in place, so nothing reaches `.recycle`).
+| What goes wrong | Recycle bin | Copy on the Mac | Future NAS mirror | Off-site backup |
+|---|---|---|---|---|
+| Accidental delete | ✔ 30 days | ✔ | ✘ mirrored instantly | ✔ |
+| File overwritten or corrupted | ✘ only deletes are caught | ✔ | ✘ | ✔ old versions kept |
+| HDD dies | ✘ | ✔ | ✔ | ✔ |
+| Ransomware on a device with the share mounted | ✘ | ✘ | ✘ | ✔ |
+| Fire, flood, theft, power surge | ✘ | ✘ | ✘ | ✔ |
+| Mistake noticed after 30 days | ✘ | depends | ✘ | ✔ |
 
-The option on the table is **restic → Backblaze B2**:
+The rule of thumb is **3-2-1**: three copies, on two kinds of storage, one of them off-site. The future NAS gives uptime, not a backup. The off-site backup stays when the NAS arrives; the NAS then takes over sending it.
+
+Decision: [Backrest](../backrest) (web UI and scheduler for restic) → **Backblaze B2**, EU Central.
 - Runs nightly. Data is encrypted on the Pi before upload, and only changes are sent. Keeps 7 daily, 4 weekly and 12 monthly snapshots.
 - Covers `photos/`, `videos/` and `documents/`, the irreplaceable data. Leaves out `media/` (movies, TV, music), which is replaceable and would make up most of the bill.
-- Costs about $6/TB per month. 60 GB is about $0.40/month.
-- The restic password goes in a password manager. Without it the backup can't be restored.
+- **Cost:** $6.95/TB per month, first 10 GB free, billed for what's stored (60 GB ≈ $0.35/month). Below ~500 GB that's the cheapest option. The library isn't expected to pass that soon (amateur, periodic shoots). Above it, a Hetzner Storage Box (€3.20/month flat for 1 TB) is cheaper, and switching is a new restic repository plus one full upload.
+- Only the Pi holds the B2 key, so ransomware on a client can't touch the backups.
+- The repository password, B2 key, bucket and endpoint go in a password manager. Without them the backup can't be restored.
 
-Alternatives: restic to a second USB disk kept somewhere else, a Hetzner Storage Box, or a Pi at a family member's place over Tailscale.
+Alternatives considered: a second USB disk kept somewhere else, a Hetzner Storage Box, a Pi at a family member's place over Tailscale.
 
 ### Later
 - **More apps on the same folders:** Navidrome (music, light), Jellyfin (movies; fine for direct play, but the Pi 4 is weak at transcoding), Immich (photos; tight on 4 GB RAM, better on a NAS).
@@ -161,8 +172,11 @@ Stop any container using the disk before unmounting.
 - [x] Empty mount point made immutable (setup step 6)
 - [x] Samba service running, both logins working ([samba/](../samba))
 - [x] Recycle bin cleanup cron job
+- [ ] Backrest running, B2 repository and plan configured ([backrest/](../backrest))
+- [ ] First full backup completed
+- [ ] Test restore done
+- [ ] Lightroom catalog backups pointed at the share
 
 ## Open questions
-- **Backups:** off-site or not, and where (see [Backups](#backups-undecided)).
 - **Spin-down:** the drive currently never sleeps. Leaving it spinning is fine for a NAS drive; letting it sleep saves a few watts and the hum, at the cost of a few seconds' wait on first access.
 - **Time Machine:** Samba can also act as a Time Machine target for the Mac (a separate share with a size limit).
