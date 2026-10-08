@@ -93,7 +93,35 @@ Backrest can notify on errors through **hooks** (Plan → Hooks). A free [Health
 
 ## Restoring files
 - **A few files:** open the snapshot in Backrest → Restore to path → `/restores/<something>`, then move the files back to where they belong through Samba.
-- **Everything, or Backrest itself is gone:** install restic anywhere (`brew install restic`), set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, then run `restic -r s3:https://<endpoint>/<bucket>/kaos restore latest --target <dir>`. You only need the four items from [What you must keep safe](#what-you-must-keep-safe). Downloads are free up to 3× the amount stored per month.
+- **Everything, or the Pi is gone:** use restic directly from any computer (see below).
+
+The bucket in the Backblaze web console only shows encrypted chunks with random names (`data/`, `index/`, `snapshots/`, …). Files can't be downloaded from there; they only come back through restic and the repository password. Never delete anything in the bucket by hand.
+
+### Restoring without the Pi
+All you need is restic and the four items from [What you must keep safe](#what-you-must-keep-safe). On a Mac:
+
+```bash
+brew install restic
+
+export RESTIC_REPOSITORY="s3:https://<endpoint>/<bucket>/kaos"
+read -s "AWS_ACCESS_KEY_ID?keyID: "; export AWS_ACCESS_KEY_ID
+read -s "AWS_SECRET_ACCESS_KEY?applicationKey: "; export AWS_SECRET_ACCESS_KEY
+read -s "RESTIC_PASSWORD?Repository password: "; export RESTIC_PASSWORD
+
+restic snapshots                    # list snapshots
+restic ls latest /userdata/documents   # browse a snapshot
+
+# One file, straight to disk
+restic dump latest /userdata/documents/<file> > ~/Downloads/<file>
+
+# A small folder as one archive (double-click to unpack)
+restic dump --archive zip latest /userdata/documents > ~/Downloads/documents.zip
+
+# A folder, or everything (drop --include for everything)
+restic restore latest --target ~/Restore --include /userdata/photos/2024
+```
+
+Paths in the snapshots start with `/userdata/` (where the disk is mounted inside the container), not `/mnt/storage/`. `read -s` keeps the secrets out of the shell history (this is zsh syntax; in bash use `read -sp "keyID: " AWS_ACCESS_KEY_ID`). Downloads are free up to 3× the amount stored per month.
 
 ## Ransomware
 Only the Pi has the B2 key. A device with the share mounted can encrypt files on the disk, but it can't touch the backups. The encrypted files would be uploaded as a new snapshot, while the older snapshots stay intact for up to 12 months. If something like that happens, restore from a snapshot taken before it.
