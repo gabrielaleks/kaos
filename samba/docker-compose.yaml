@@ -8,6 +8,7 @@ services:
     # Accounts (ACCOUNT_*, UID_*, GROUPS_*) live in .env so usernames and passwords stay out of git
     env_file: .env
     environment:
+      FAIL_FAST: 1
       GROUP_smbusers: 1500
       # Only the home LAN and the tailnet (IPv4 and IPv6) may connect
       SAMBA_GLOBAL_STANZA: >-
