@@ -172,10 +172,8 @@ Stop any container using the disk before unmounting.
 - [x] Empty mount point made immutable (setup step 6)
 - [x] Samba service running, both logins working ([samba/](../samba))
 - [x] Recycle bin cleanup cron job
-- [ ] Backrest running, B2 repository and plan configured ([backrest/](../backrest))
-- [ ] First full backup completed
-- [ ] Test restore done
-- [ ] Lightroom catalog backups pointed at the share
+- [x] Backrest running, B2 repository and plan configured ([backrest/](../backrest))
+- [x] Test restore done
 
 ## Open questions
 - **Spin-down:** the drive currently never sleeps. Leaving it spinning is fine for a NAS drive; letting it sleep saves a few watts and the hum, at the cost of a few seconds' wait on first access.
