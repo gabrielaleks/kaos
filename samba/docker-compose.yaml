@@ -1,0 +1,36 @@
+services:
+  samba:
+    image: ghcr.io/servercontainers/samba:smbd-only-latest
+    container_name: samba
+    restart: unless-stopped
+    # SMB isn't HTTP, so it doesn't go through Traefik: listen on the Pi's port 445 directly
+    network_mode: host
+    # Accounts (ACCOUNT_*, UID_*, GROUPS_*) live in .env so usernames and passwords stay out of git
+    env_file: .env
+    environment:
+      GROUP_smbusers: 1500
+      # Only the home LAN and the tailnet (IPv4 and IPv6) may connect
+      SAMBA_GLOBAL_STANZA: >-
+        hosts allow = 127.0.0.1 192.168.178.0/24 100.64.0.0/10 fd7a:115c:a1e0::/48;
+        server min protocol = SMB3
+      # Every user is written to disk as alekspi (UID 1000), so file ownership stays consistent.
+      # Deleted files go to .recycle/<username>/ instead of disappearing (SMB has no Trash).
+      SAMBA_VOLUME_CONFIG_storage: >-
+        [storage];
+        path = /shares/storage;
+        valid users = @smbusers;
+        guest ok = no;
+        read only = no;
+        browseable = yes;
+        force user = alekspi;
+        create mask = 0664;
+        directory mask = 0775;
+        vfs objects = catia fruit streams_xattr recycle;
+        recycle:repository = .recycle/%U;
+        recycle:keeptree = yes;
+        recycle:versions = yes;
+        recycle:touch = yes;
+        recycle:directory_mode = 0775;
+        recycle:exclude = ._*,.DS_Store
+    volumes:
+      - /mnt/storage:/shares/storage

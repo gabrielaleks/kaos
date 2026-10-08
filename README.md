@@ -15,6 +15,7 @@ A self-hosted homeserver running on a Raspberry Pi: privately accessible from an
 | [Lista](./lista) | Grocery list app |
 | [Nanomatter](./nanomatter) | Lightweight Matter controller |
 | [Envelope](./envelope) | Mailbox notification system |
+| [Samba](./samba) | Network drive for the [storage disk](./storage) |
 
 ## Setup
 
